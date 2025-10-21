@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
+{% block title %}Login - MyStore{% endblock %}
 
 {% block content %}
 <div class="login-page d-flex justify-content-center align-items-center py-5">
-  <div class="login-card shadow-lg rounded-4 p-4 bg-white" style="max-width: 420px; width: 100%;">
-    <h3 class="text-center fw-bold mb-4 text-primary">Welcome Back</h3>
+  <div class="login-card shadow-lg rounded-4 p-5 bg-white animate-card">
+    <h3 class="text-center fw-bold mb-3 text-primary">Welcome Back</h3>
     <p class="text-center text-muted mb-4">Log in to continue shopping</p>
 
     <form method="POST">
@@ -22,7 +23,7 @@
         <a href="#" class="text-decoration-none small text-primary">Forgot Password?</a>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Login</button>
+      <button type="submit" class="btn btn-primary w-100 py-2 fw-bold btn-animated">Login</button>
     </form>
 
     <div class="text-center mt-4">
@@ -35,7 +36,7 @@
 
 <style>
   body {
-    background: #f8f9fa;
+    background: linear-gradient(120deg, #f8f9fa, #e9ecef);
   }
 
   .login-page {
@@ -43,16 +44,57 @@
   }
 
   .login-card {
-    transition: all 0.3s ease-in-out;
+    max-width: 420px;
+    width: 100%;
+    transition: all 0.4s ease-in-out;
+    opacity: 0;
+    transform: translateY(50px);
   }
 
   .login-card:hover {
-    transform: scale(1.01);
+    transform: scale(1.02);
+  }
+
+  .login-card.animate-card {
+    animation: slideFadeIn 0.8s forwards;
+  }
+
+  @keyframes slideFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   input:focus {
     border-color: #0d6efd !important;
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+
+  .btn-animated {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .btn-animated::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.15);
+    transform: skewX(-20deg);
+    transition: all 0.5s ease;
+  }
+
+  .btn-animated:hover::before {
+    left: 200%;
   }
 </style>
 {% endblock %}

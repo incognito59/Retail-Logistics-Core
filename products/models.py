@@ -38,19 +38,23 @@ class Comment(models.Model):
         return f"{self.name} - {self.rating} stars on {self.product.name}"
 
 class Wishlist(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlist')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
     def _str_(self):
         return f"{self.user.username} ❤ {self.product.name}"
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     created_at = models.DateTimeField(auto_now_add=True)
     is_paid = models.BooleanField(default=False)
 
     def _str_(self):
         return f"Order #{self.id} - {self.user.username}"
+
+    @property
+    def total(self):
+        return sum(item.total_price for item in self.items.all())
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
@@ -59,3 +63,7 @@ class OrderItem(models.Model):
 
     def _str_(self):
         return f"{self.quantity} x {self.product.name}"
+
+    @property
+    def total_price(self):
+        return self.product.price * self.quantity

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -51,9 +51,12 @@
       .nav-link {
         color: #fff !important;
         font-weight: 500;
+        transition: 0.3s;
+      }
+      .nav-link:hover {
+        opacity: 0.85;
       }
 
-      /* Search Bar */
       .navbar .form-control {
         border-radius: 30px;
         padding: 8px 16px;
@@ -84,9 +87,9 @@
         margin-top: 80px;
       }
 
-      /* Animated price + product card */
-      .animated-price {
-        animation: colorShift 5s infinite alternate;
+      /* Animation for product and price */
+      .animated-price, .animated-product {
+        animation: colorShift 6s infinite alternate;
       }
 
       @keyframes colorShift {
@@ -96,39 +99,103 @@
         75% { color: #0097e6; }
         100% { color: #ff47a3; }
       }
+
+      /* Toast notification */
+      .toast-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1055;
+      }
+
+      /* Scroll to top */
+      #scrollTopBtn {
+        position: fixed;
+        bottom: 40px;
+        left: 40px;
+        background-color: var(--main-color);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        padding: 10px 14px;
+        font-size: 1.4rem;
+        cursor: pointer;
+        display: none;
+      }
+
+      #scrollTopBtn:hover {
+        opacity: 0.8;
+      }
+
+      /* Loader */
+      #loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+      }
+
+      .spinner-border {
+        color: var(--main-color);
+      }
+
+      /* Product card hover */
+      .product-card {
+        background-color: var(--card-bg);
+        border: none;
+        border-radius: 16px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .product-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn-add {
+        background-color: var(--main-color);
+        color: #fff;
+        border-radius: 25px;
+        transition: 0.3s;
+      }
+
+      .btn-add:hover {
+        background-color: #e43f3f;
+      }
     </style>
   </head>
 
   <body>
+    <!-- Loader -->
+    <div id="loader">
+      <div class="spinner-border" role="status"></div>
+    </div>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm">
       <div class="container">
-        <a class="navbar-brand" href="{% url 'products:product-list' %}">
-          Red<span>Cart</span>
-        </a>
+        <a class="navbar-brand" href="{% url 'products:product-list' %}">Red<span>Cart</span></a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-          <!-- Search Bar (Global) -->
           <form class="d-flex mx-auto" method="get" action="{% url 'products:product-list' %}">
             <input class="form-control me-2 shadow-sm" type="search" name="search" placeholder="Search for products..." value="{{ request.GET.search }}">
             <button class="btn btn-light" type="submit">Search</button>
           </form>
 
-          <!-- Nav Links -->
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'products:view-cart' %}"><i class="bi bi-cart3"></i> Cart</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'products:login' %}">Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'products:register' %}">Register</a>
-            </li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'products:view-cart' %}"><i class="bi bi-cart3"></i> Cart</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'products:login' %}">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'products:register' %}">Register</a></li>
             <li class="nav-item">
               <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
                 <i class="bi bi-brightness-high-fill" id="theme-icon"></i>
@@ -139,27 +206,42 @@
       </div>
     </nav>
 
-    <!-- Dynamic Content Block -->
-    <div class="container mt-4">
-      {% block content %}
-      {% endblock %}
+    <!-- Toast notification -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert">
+        <div class="d-flex">
+          <div class="toast-body">✅ Item added to cart successfully!</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+      </div>
     </div>
+
+    <!-- Dynamic content -->
+    <div class="container mt-4">
+      {% block content %}{% endblock %}
+    </div>
+
+    <!-- Scroll to top -->
+    <button id="scrollTopBtn" title="Go to top"><i class="bi bi-arrow-up"></i></button>
 
     <!-- Footer -->
     <footer class="footer">
-      <p>© 2025 RedCart. Built with ❤️ by Peter Afolabi</p>
+      <p>© 2025 RedCart. Built with ❤ by Peter Afolabi</p>
     </footer>
 
     <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-      // Theme toggle functionality
+      // Loader
+      window.addEventListener("load", () => {
+        document.getElementById("loader").style.display = "none";
+      });
+
+      // Theme toggle
       const toggle = document.getElementById('theme-toggle');
       const icon = document.getElementById('theme-icon');
       const userTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', userTheme);
-
       if (userTheme === 'dark') icon.classList.replace('bi-brightness-high-fill', 'bi-moon-fill');
 
       toggle.addEventListener('click', () => {
@@ -170,6 +252,28 @@
         icon.classList.toggle('bi-moon-fill');
         icon.classList.toggle('bi-brightness-high-fill');
       });
+
+      // Scroll to top
+      const scrollTopBtn = document.getElementById("scrollTopBtn");
+      window.onscroll = () => scrollFunction();
+      function scrollFunction() {
+        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+          scrollTopBtn.style.display = "block";
+        } else {
+          scrollTopBtn.style.display = "none";
+        }
+      }
+      scrollTopBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+      // Toast alert trigger
+      function showToast() {
+        const toastEl = document.getElementById('liveToast');
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+      }
     </script>
   </body>
 </html>
+      main.style.opacity = 1;
+    }, 200);
+  }

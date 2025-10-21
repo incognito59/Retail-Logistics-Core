@@ -4,7 +4,7 @@ from django.urls import reverse
 from .models import Product, Comment
 
 
-# 🏠 Product List / Search
+# 🏠 Home / Search Page
 def index(request):
     query = request.GET.get('q') or request.GET.get('search')
     products = Product.objects.filter(name__icontains=query) if query else Product.objects.all()
@@ -25,7 +25,7 @@ def register_page(request):
     return render(request, 'register.html')
 
 
-# ➕ Add to Cart (with success message)
+# ➕ Add to Cart (Success Message)
 def add_to_cart(request, item_id):
     product = get_object_or_404(Product, id=item_id)
     cart = request.session.get('cart', {})
@@ -37,14 +37,14 @@ def add_to_cart(request, item_id):
     cart_url = reverse('products:view-cart')
     messages.success(
         request,
-        f"{product.name} has been added to your cart! "
-        f"<a href='{cart_url}' class='btn btn-sm btn-outline-dark ms-2'>Check Cart Now</a>",
+        f"🛒 {product.name} added to your cart! "
+        f"<a href='{cart_url}' class='btn btn-sm btn-outline-light ms-2'>Check Cart Now</a>",
         extra_tags='safe'
     )
     return redirect('products:product-list')
 
 
-# 🛒 View Cart
+# 🛒 View Cart Page
 def view_cart(request):
     cart = request.session.get('cart', {})
     products = []
@@ -65,7 +65,7 @@ def view_cart(request):
     return render(request, 'cart.html', context)
 
 
-# ❌ Delete from Cart
+# ❌ Delete Item from Cart
 def delete_from_cart(request, product_id):
     cart = request.session.get('cart', {})
     product_id = str(product_id)
@@ -75,7 +75,7 @@ def delete_from_cart(request, product_id):
         request.session['cart'] = cart
         messages.info(request, "🗑️ Item removed from your cart successfully.")
     else:
-        messages.warning(request, "Item not found in cart.")
+        messages.warning(request, "Item not found in your cart.")
 
     return redirect('products:view-cart')
 
@@ -108,13 +108,13 @@ def checkout(request):
 # ✅ Confirm Payment
 def confirm_payment(request):
     if request.method == 'POST':
-        messages.success(request, "✅ Payment confirmed. Thank you for shopping with RedCart!")
-        request.session['cart'] = {}  # clear cart
+        messages.success(request, "✅ Payment confirmed! Thank you for shopping with RedCart.")
+        request.session['cart'] = {}
         return redirect('products:product-list')
     return redirect('products:checkout')
 
 
-# 🧾 Product Detail + Comments
+# 📦 Product Detail Page + Comments
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     additional_images = getattr(product, 'additional_images', [])
@@ -126,7 +126,7 @@ def product_detail(request, product_id):
         rating = request.POST.get('rating')
         if name and text and rating:
             Comment.objects.create(product=product, name=name, text=text, rating=rating)
-            messages.success(request, "Thank you for your review!")
+            messages.success(request, "💬 Thank you for your review!")
             return redirect('products:product-detail', product_id=product.id)
 
     return render(request, 'product_detail.html', {
@@ -137,8 +137,8 @@ def product_detail(request, product_id):
     })
 
 
-# ⚡ Buy Now (direct to checkout)
+# ⚡ Buy Now (Direct Checkout)
 def buy_now(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    request.session['cart'] = {str(product.id): 1}  # overwrite existing cart
+    request.session['cart'] = {str(product.id): 1}
     return redirect('products:checkout')

@@ -2,7 +2,7 @@
 {% block content %}
 <style>
   body {
-    background-color: #f5f5f5;
+    background-color: #f8f9fa;
     font-family: "Poppins", sans-serif;
   }
 
@@ -10,19 +10,31 @@
     max-width: 500px;
     margin: 60px auto;
     background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     padding: 40px 35px;
+    transition: all 0.3s ease;
+  }
+
+  .register-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
   }
 
   .register-header {
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
   }
 
   .register-header h2 {
     color: #ff4747;
     font-weight: 700;
+    font-size: 1.8rem;
+  }
+
+  .register-header p {
+    color: #555;
+    font-size: 0.95rem;
   }
 
   .form-group label {
@@ -31,10 +43,10 @@
   }
 
   .form-control {
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1px solid #ccc;
-    padding: 10px;
-    transition: border-color 0.2s ease;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
   }
 
   .form-control:focus {
@@ -43,57 +55,70 @@
   }
 
   .btn-primary {
-    background-color: #ff4747;
+    background: linear-gradient(90deg, #ff4747, #ff6b6b);
     border: none;
-    border-radius: 8px;
-    padding: 10px 0;
+    border-radius: 12px;
+    padding: 12px 0;
     width: 100%;
-    font-weight: 600;
-    transition: background-color 0.2s ease;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s ease;
   }
 
   .btn-primary:hover {
-    background-color: #e63e3e;
+    background: linear-gradient(90deg, #e63e3e, #ff5959);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
   }
 
   .login-link {
     text-align: center;
-    margin-top: 15px;
-    font-size: 14px;
+    margin-top: 18px;
+    font-size: 0.9rem;
   }
 
   .login-link a {
     color: #ff4747;
     font-weight: 600;
     text-decoration: none;
+    transition: 0.2s;
   }
 
   .login-link a:hover {
     text-decoration: underline;
+    color: #ff6b6b;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 576px) {
+    .register-container {
+      margin: 40px 20px;
+      padding: 30px 25px;
+    }
   }
 </style>
 
 <div class="register-container">
   <div class="register-header">
     <h2>Create Your Account</h2>
-    <p>Join our e-commerce family and start shopping smarter!</p>
+    <p>Join RedCart and start shopping smarter today!</p>
   </div>
 
   <form method="POST">
     {% csrf_token %}
     <div class="form-group mb-3">
       <label for="full_name">Full Name</label>
-      <input type="text" class="form-control" name="full_name" id="full_name" required>
+      <input type="text" class="form-control" name="full_name" id="full_name" placeholder="John Doe" required>
     </div>
 
     <div class="form-group mb-3">
       <label for="email">Email Address</label>
-      <input type="email" class="form-control" name="email" id="email" required>
+      <input type="email" class="form-control" name="email" id="email" placeholder="example@email.com" required>
     </div>
 
     <div class="form-group mb-3">
       <label for="phone">Phone Number (Nigerian)</label>
-      <input type="tel" class="form-control" name="phone" id="phone" pattern="^0\d{10}$" required>
+      <input type="tel" class="form-control" name="phone" id="phone" pattern="^0\d{10}$" placeholder="08012345678" required>
     </div>
 
     <div class="form-group mb-3">

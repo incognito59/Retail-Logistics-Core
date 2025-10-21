@@ -5,20 +5,22 @@
 
 {% block content %}
 <div class="container my-5">
-  <!-- Top Bar: Search + Theme Toggle -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <form class="d-flex w-75" method="get" action="{% url 'products:product-list' %}">
-      <input type="text" class="form-control me-2" name="q" placeholder="Search for products..." value="{{ request.GET.q }}">
-      <button class="btn btn-warning fw-semibold">Search</button>
+
+  <!-- Header: Search Bar + Theme Toggle -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <form class="d-flex flex-grow-1 me-3" method="get" action="{% url 'products:product-list' %}">
+      <input type="text" class="form-control me-2 rounded-pill shadow-sm" name="q" placeholder="Search for products..." value="{{ request.GET.q }}">
+      <button class="btn btn-warning fw-semibold rounded-pill px-4 shadow-sm">Search</button>
     </form>
-    <button id="theme-toggle" class="btn btn-outline-dark">🌙 Dark Mode</button>
+    <button id="theme-toggle" class="btn btn-outline-dark rounded-pill px-4 shadow-sm">🌙 Dark Mode</button>
   </div>
 
   <div class="row g-4">
+
     <!-- CART ITEMS SECTION -->
     <div class="col-lg-8">
-      <div class="card border-0 shadow-sm rounded-4 p-3 theme-card">
-        <h4 class="fw-bold mb-4">Shopping Cart</h4>
+      <div class="card border-0 shadow-lg rounded-4 p-4 theme-card">
+        <h4 class="fw-bold mb-4 text-gradient">🛒 Shopping Cart</h4>
 
         {% if products %}
           <div class="table-responsive">
@@ -37,7 +39,7 @@
                   <tr class="cart-row">
                     <td>
                       <div class="d-flex align-items-center gap-3">
-                        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="rounded shadow-sm" style="width: 70px; height: 70px; object-fit: cover;">
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="rounded-3 shadow-sm" style="width: 70px; height: 70px; object-fit: cover;">
                         <div>
                           <h6 class="mb-1 fw-semibold color-changing">{{ product.name }}</h6>
                           <small class="text-muted d-block">{{ product.description|truncatechars:50 }}</small>
@@ -46,16 +48,13 @@
                     </td>
 
                     <td class="text-center">
-                      <input type="number" min="1" value="{{ product.quantity }}" class="form-control form-control-sm text-center qty-input" style="width: 70px;">
+                      <input type="number" min="1" value="{{ product.quantity }}" class="form-control form-control-sm text-center qty-input rounded-pill" style="width: 70px;">
                     </td>
 
                     <td class="text-end color-changing">₦{{ product.price|floatformat:2 }}</td>
                     <td class="text-end fw-semibold color-changing">₦{{ product.total_price|floatformat:2 }}</td>
                     <td class="text-end">
-                      <!-- ✅ Fixed delete button -->
-                      <a href="{% url 'products:delete-from-cart' product.id %}" 
-                         class="btn btn-sm btn-outline-danger rounded-circle remove-btn" 
-                         title="Remove Item">
+                      <a href="{% url 'products:delete-from-cart' product.id %}" class="btn btn-sm btn-outline-danger rounded-circle remove-btn" title="Remove Item">
                         <i class="bi bi-trash"></i>
                       </a>
                     </td>
@@ -66,18 +65,18 @@
           </div>
         {% else %}
           <div class="text-center py-5">
-            <img src="{% static 'img/empty-cart.svg' %}" alt="Empty Cart" class="img-fluid" style="max-width: 200px;">
+            <img src="{% static 'img/empty-cart.svg' %}" alt="Empty Cart" class="img-fluid mb-3" style="max-width: 220px;">
             <h5 class="mt-3 text-muted">Your cart is empty</h5>
-            <a href="{% url 'products:product-list' %}" class="btn mt-3 fw-semibold" style="background-color: #F68B1E; color: white;">Continue Shopping</a>
+            <a href="{% url 'products:product-list' %}" class="btn btn-warning rounded-pill mt-3 px-5 fw-semibold shadow-sm">Continue Shopping</a>
           </div>
         {% endif %}
       </div>
     </div>
 
-    <!-- CART SUMMARY SECTION -->
+    <!-- ORDER SUMMARY SECTION -->
     <div class="col-lg-4">
-      <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top theme-card" style="top: 90px;">
-        <h5 class="fw-bold mb-4">Order Summary</h5>
+      <div class="card border-0 shadow-lg rounded-4 p-4 sticky-top theme-card" style="top: 90px;">
+        <h5 class="fw-bold mb-4 text-gradient">💳 Order Summary</h5>
 
         <div class="d-flex justify-content-between mb-2">
           <span>Subtotal</span>
@@ -93,34 +92,37 @@
 
         <div class="d-flex justify-content-between mb-3">
           <span class="fw-bold fs-5">Total</span>
-          <span class="fw-bold text-danger fs-5 color-changing">₦{{ total|floatformat:2 }}</span>
+          <span class="fw-bold fs-5 color-changing">₦{{ total|floatformat:2 }}</span>
         </div>
 
-        <a href="{% url 'products:checkout' %}" class="btn checkout-btn w-100 fw-semibold py-3 mb-3">
+        <a href="{% url 'products:checkout' %}" class="btn checkout-btn w-100 fw-semibold py-3 mb-3 rounded-pill shadow-sm">
           Proceed to Checkout
         </a>
 
-        <a href="{% url 'products:product-list' %}" class="btn btn-outline-dark w-100 fw-semibold py-2">
+        <a href="{% url 'products:product-list' %}" class="btn btn-outline-dark w-100 fw-semibold py-2 rounded-pill">
           Continue Shopping
         </a>
       </div>
     </div>
+
   </div>
 </div>
 
 <style>
+  /* Global Animation Effects */
   body {
     transition: background-color 0.5s ease, color 0.5s ease;
   }
 
   .theme-card {
     transition: background-color 0.5s ease, color 0.5s ease;
+    border-radius: 20px;
   }
 
+  /* Color Animation for Premium Feel */
   .color-changing {
     animation: colorChange 5s infinite alternate;
   }
-
   @keyframes colorChange {
     0% { color: #ff4d4d; }
     25% { color: #ff9900; }
@@ -129,23 +131,34 @@
     100% { color: #cc00ff; }
   }
 
+  .text-gradient {
+    background: linear-gradient(45deg, #ff6b6b, #f8c471, #6ab04c, #2980b9, #8e44ad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textShift 8s infinite alternate;
+  }
+  @keyframes textShift {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+
+  /* Buttons */
   .checkout-btn {
-    background-color: #F68B1E;
-    color: white;
+    background: linear-gradient(135deg, #f68b1e, #ff6f00);
+    color: #fff;
     border: none;
     transition: all 0.3s ease;
   }
-
   .checkout-btn:hover {
-    background-color: #e67300;
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(246,139,30,0.4);
   }
 
   .remove-btn {
     border: 1px solid #ff4d4d;
     color: #ff4d4d;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
   }
-
   .remove-btn:hover {
     background-color: #ff4d4d;
     color: white;
@@ -156,19 +169,21 @@
     transition: 0.3s ease;
   }
 
+  /* Dark Mode */
   .dark-mode {
     background-color: #121212 !important;
     color: #e0e0e0 !important;
   }
-
   .dark-mode .theme-card {
-    background-color: #1e1e1e !important;
+    background-color: #1f1f1f !important;
     color: #ddd !important;
   }
-
   .dark-mode .table-light {
-    background-color: #333 !important;
+    background-color: #2a2a2a !important;
     color: #fff !important;
+  }
+  .dark-mode .checkout-btn {
+    background: linear-gradient(135deg, #f39c12, #d35400);
   }
 </style>
 
@@ -177,7 +192,9 @@
   const toggleBtn = document.getElementById('theme-toggle');
   toggleBtn.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
-    toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️ Light Mode' : '🌙 Dark Mode';
+    toggleBtn.textContent = document.body.classList.contains('dark-mode')
+      ? '☀ Light Mode'
+      : '🌙 Dark Mode';
   });
 </script>
 

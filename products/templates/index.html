@@ -1,138 +1,148 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-5">
 
-  <h2 class="text-center fw-bold mb-4">🔥 Featured Products</h2>
+<section class="py-5 text-center mb-5" style="background: url('/static/images/hero-bg.jpg') center/cover no-repeat; border-radius: 20px;">
+  <div class="container py-5 text-white" style="background: rgba(0,0,0,0.45); border-radius: 20px;">
+    <h1 class="display-4 fw-bold animated-product">Shop Smart, Live Better</h1>
+    <p class="lead animated-product">Find trending gadgets, fashion, and essentials delivered to your door.</p>
+    <a href="{% url 'products:product-list' %}" class="btn btn-lg btn-add mt-3">Start Shopping</a>
+  </div>
+</section>
 
-  {% if products %}
-  <div class="row g-4">
-    {% for product in products %}
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="card border-0 shadow-sm h-100 product-card animate-card">
+<section class="mb-5">
+  <h2 class="text-center fw-bold mb-4">🔥 Trending Categories</h2>
+  <div class="overflow-auto py-2">
+    <div class="d-flex gap-3 px-3">
+      {% for category in categories %}
+      <div class="card text-center flex-shrink-0 category-card" style="width: 150px;">
+        <a href="{% url 'products:category' category.slug %}" class="text-decoration-none text-dark">
+          <img src="{{ category.image_url }}" class="card-img-top rounded-3" style="height:100px; object-fit:cover;" alt="{{ category.name }}">
+          <div class="card-body p-2">
+            <h6 class="fw-bold mb-0">{{ category.name }}</h6>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
 
-        <!-- Product Image -->
-        <div class="position-relative overflow-hidden rounded-3">
-          <a href="{% url 'products:product-detail' product.id %}">
-            <img 
-              src="{{ product.image_url }}" 
-              class="card-img-top img-fluid" 
-              style="height: 250px; object-fit: cover;" 
-              alt="{{ product.name }}"
-            >
-          </a>
-          <div class="overlay d-flex justify-content-center align-items-center">
-            <a href="{% url 'products:product-detail' product.id %}" class="btn btn-light btn-sm me-2">
-              <i class="bi bi-eye"></i> View
-            </a>
-            <a href="{% url 'products:add-to-cart' product.id %}" class="btn btn-danger btn-sm add-to-cart-btn">
-              <i class="bi bi-cart-plus"></i> Add
-            </a>
-          </div>
-        </div>
+<section class="mb-5">
+  <h2 class="text-center fw-bold mb-4">🔥 Hot Deals</h2>
+  <div id="hotDealsCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      {% for deal in hot_deals %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        <div class="d-flex justify-content-center">
+          <div class="card border-0 shadow-sm product-card animate-card" style="width: 250px;">
+            <a href="{% url 'products:product-detail' deal.id %}">
+              <img src="{{ deal.image_url }}" class="card-img-top rounded-3" style="height:200px; object-fit:cover;" alt="{{ deal.name }}">
+            </a>
+            <div class="card-body text-center">
+              <h6 class="fw-bold mb-2 text-truncate">{{ deal.name }} </h6>
+              <p class="fw-semibold fs-5 mb-2 animated-price">₦{{ deal.price|floatformat:2 }}</p>
+              <a href="{% url 'products:add-to-cart' deal.id %}" class="btn btn-danger btn-sm add-to-cart-btn me-2"><i class="bi bi-cart-plus"></i> Add</a>
+              <a href="{% url 'products:buy-now' deal.id %}" class="btn btn-success btn-sm">Buy Now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#hotDealsCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#hotDealsCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+</section>
 
-        <!-- Product Info -->
-        <div class="card-body text-center">
-          <h6 class="fw-bold mb-2 text-truncate">{{ product.name }}</h6>
-          <p class="fw-semibold fs-5 mb-0 animated-price">₦{{ product.price|floatformat:2 }}</p>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
+<section>
+  <h2 class="text-center fw-bold mb-4">🔥 Featured Products</h2>
+  {% if products %}
+  <div class="row g-4">
+    {% for product in products %}
+    <div class="col-6 col-md-4 col-lg-3">
+      <div class="card border-0 shadow-sm h-100 product-card animate-card">
 
-  <div class="text-center mt-5">
-    <a href="{% url 'products:view-cart' %}" class="btn btn-warning px-5 py-2 rounded-pill fw-bold shadow-sm">
-      🛒 View Cart
-    </a>
-  </div>
+                <div class="position-relative overflow-hidden rounded-3">
+          <a href="{% url 'products:product-detail' product.id %}">
+            <img src="{{ product.image_url }}" class="card-img-top img-fluid" style="height: 250px; object-fit: cover;" alt="{{ product.name }}">
+          </a>
+          <div class="overlay d-flex justify-content-center align-items-center">
+            <a href="{% url 'products:product-detail' product.id %}" class="btn btn-light btn-sm me-2">
+              <i class="bi bi-eye"></i> View
+            </a>
+            <a href="{% url 'products:add-to-cart' product.id %}" class="btn btn-danger btn-sm add-to-cart-btn">
+              <i class="bi bi-cart-plus"></i> Add
+            </a>
+            <a href="{% url 'products:buy-now' product.id %}" class="btn btn-success btn-sm ms-2">Buy Now</a>
+          </div>
+        </div>
 
-  {% else %}
-    <p class="text-center mt-5 text-muted">No products found.</p>
-  {% endif %}
+                <div class="card-body text-center">
+          <h6 class="fw-bold mb-2 text-truncate">{{ product.name }}</h6>
+          <p class="fw-semibold fs-5 mb-0 animated-price">₦{{ product.price|floatformat:2 }}</p>
+        </div>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="text-center mt-5">
+    <a href="{% url 'products:view-cart' %}" class="btn btn-warning px-5 py-2 rounded-pill fw-bold shadow-sm">
+      🛒 View Cart
+    </a>
+  </div>
+  {% else %}
+    <p class="text-center mt-5 text-muted">No products found.</p>
+  {% endif %}
+</section>
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+  <div id="addToCartToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body">
+        ✅ Product added to cart! <a href="{% url 'products:view-cart' %}" class="text-white text-decoration-underline">Check cart now</a>.
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
 </div>
 
 <style>
-  /* Product Card Hover Effects */
-  .product-card {
-    transition: all 0.3s ease;
-    border-radius: 20px;
-    background-color: var(--card-bg);
-  }
+/* Product Card Hover Effects */
+.product-card { transition: all 0.3s ease; border-radius: 20px; background-color: var(--card-bg); }
+.product-card:hover { transform: translateY(-5px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
 
-  .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-  }
+.overlay { position: absolute; top:0; left:0; height:100%; width:100%; background: rgba(0,0,0,0.4); opacity:0; transition: all 0.3s ease; }
+.product-card:hover .overlay { opacity:1; }
+.overlay .btn:hover { transform: scale(1.1); }
 
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background: rgba(0,0,0,0.4);
-    opacity: 0;
-    transition: all 0.3s ease;
-  }
+/* Animated price color */
+.animated-price { animation: colorShift 6s infinite alternate; }
+@keyframes colorShift { 0% { color:#ff4747;} 25%{color:#f8b400;} 50%{color:#4cd137;} 75%{color:#0097e6;} 100%{color:#ff47a3;} }
 
-  .product-card:hover .overlay {
-    opacity: 1;
-  }
+/* Animated card background */
+.animate-card { animation: bgShift 10s infinite alternate; }
+@keyframes bgShift { 0%{background-color:#fff5f5;} 25%{background-color:#fef6e4;} 50%{background-color:#f1fff1;} 75%{background-color:#eaf7ff;} 100%{background-color:#fff0fa;} }
 
-  .overlay .btn:hover {
-    transform: scale(1.1);
-  }
-
-  /* Animated price color */
-  .animated-price {
-    animation: colorShift 6s infinite alternate;
-  }
-
-  @keyframes colorShift {
-    0% { color: #ff4747; }
-    25% { color: #f8b400; }
-    50% { color: #4cd137; }
-    75% { color: #0097e6; }
-    100% { color: #ff47a3; }
-  }
-
-  /* Animated card background */
-  .animate-card {
-    animation: bgShift 10s infinite alternate;
-  }
-
-  @keyframes bgShift {
-    0% { background-color: #fff5f5; }
-    25% { background-color: #fef6e4; }
-    50% { background-color: #f1fff1; }
-    75% { background-color: #eaf7ff; }
-    100% { background-color: #fff0fa; }
-  }
+/* Entrance animation for product cards */
+.animate-card { opacity:0; transform: translateY(20px); animation: fadeInUp 0.8s forwards; }
+.animate-card:nth-child(1) { animation-delay: 0.1s; }
+.animate-card:nth-child(2) { animation-delay: 0.2s; }
+.animate-card:nth-child(3) { animation-delay: 0.3s; }
+.animate-card:nth-child(4) { animation-delay: 0.4s; }
+@keyframes fadeInUp { 
+    to { 
+        opacity:1; 
+        transform: translateY(0); 
+    } 
+}
 </style>
 
-<!-- Toast Notification -->
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-  <div id="addToCartToast" class="toast align-items-center text-white bg-success border-0" role="alert">
-    <div class="d-flex">
-      <div class="toast-body">
-        ✅ Product added to cart! <a href="{% url 'products:view-cart' %}" class="text-white text-decoration-underline">Check cart now</a>.
-      </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-    </div>
-  </div>
-</div>
-
-<script>
-  // Trigger toast on add-to-cart click
-  const addButtons = document.querySelectorAll('.add-to-cart-btn');
-  const toastEl = document.getElementById('addToCartToast');
-  const toast = new bootstrap.Toast(toastEl, { delay: 2500 });
-
-  addButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      setTimeout(() => toast.show(), 300);
-    });
-  });
-</script>
-
-{% endblock %}
+{% endblock content %}

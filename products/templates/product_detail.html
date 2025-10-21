@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}{{ product.name }} - MyStore{% endblock %}
+
 {% block content %}
 <div class="container my-5">
+
   <div class="row g-4 align-items-start">
     
     <!-- Thumbnails on the left -->
@@ -19,31 +22,33 @@
 
     <!-- Main image in the center -->
     <div class="col-md-6">
-      <div class="main-img-container border rounded-4 shadow-sm overflow-hidden">
+      <div class="main-img-container border rounded-4 shadow-sm overflow-hidden animate-img">
         <img id="main-image" src="{{ product.image_url }}" class="img-fluid" alt="{{ product.name }}">
       </div>
     </div>
 
     <!-- Product details on the right -->
     <div class="col-md-4">
-      <div class="p-4 rounded-4 shadow-sm bg-white border">
-        <h3 class="fw-bold">{{ product.name }}</h3>
-        <p class="text-muted">{{ product.description }}</p>
+      <div class="p-4 rounded-4 shadow-sm theme-card border animate-card">
+        <h3 class="fw-bold mb-2">{{ product.name }}</h3>
+        <p class="text-muted mb-3">{{ product.description }}</p>
 
-        <h4 class="text-danger fw-semibold mb-4">₦{{ product.price|floatformat:2 }}</h4>
+        <h4 class="fw-bold animated-price text-danger mb-4">₦{{ product.price|floatformat:2 }}</h4>
 
         <div class="d-flex flex-column gap-2">
-          <a href="{% url 'products:add-to-cart' product.id %}" class="btn btn-warning w-100 text-dark fw-semibold">
+          <a href="{% url 'products:add-to-cart' product.id %}" 
+             class="btn btn-warning w-100 fw-semibold text-dark btn-legendary">
             🛒 Add to Cart
           </a>
-          <a href="{% url 'products:buy-now' product.id %}" class="btn btn-dark w-100 fw-semibold">
+          <a href="{% url 'products:buy-now' product.id %}" 
+             class="btn btn-dark w-100 fw-semibold btn-legendary">
             ⚡ Buy Now
           </a>
         </div>
 
-        <div class="mt-4">
-          <p class="small mb-1 text-secondary"><strong>Delivery:</strong> Free shipping nationwide</p>
-          <p class="small text-secondary"><strong>Estimated Arrival:</strong> 3 - 7 business days</p>
+        <div class="mt-4 text-muted small">
+          <p><strong>Delivery:</strong> Free shipping nationwide</p>
+          <p><strong>Estimated Arrival:</strong> 3 - 7 business days</p>
         </div>
       </div>
     </div>
@@ -55,7 +60,7 @@
     <h4 class="fw-bold mb-4">Customer Reviews</h4>
 
     {% for comment in comments %}
-      <div class="p-4 mb-3 border rounded-4 bg-light shadow-sm">
+      <div class="p-4 mb-3 border rounded-4 bg-light shadow-sm animate-card">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <strong>{{ comment.name }}</strong>
           <span class="text-warning">
@@ -76,7 +81,7 @@
     {% endfor %}
 
     <!-- Review Form -->
-    <form method="post" class="mt-4 p-4 border rounded-4 bg-white shadow-sm">
+    <form method="post" class="mt-4 p-4 border rounded-4 shadow-sm theme-card animate-card">
       {% csrf_token %}
       <h5 class="fw-semibold mb-3">Write a Review</h5>
 
@@ -100,7 +105,7 @@
         </select>
       </div>
 
-      <button type="submit" class="btn btn-warning w-100 fw-semibold text-dark">
+      <button type="submit" class="btn btn-warning w-100 fw-semibold text-dark btn-legendary">
         Submit Review
       </button>
     </form>
@@ -121,24 +126,75 @@
 
 <!-- Styles -->
 <style>
+  /* Main image and thumbnail hover effects */
   .main-img-container img {
     width: 100%;
     height: 420px;
     object-fit: cover;
-    transition: opacity 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease;
   }
+  .main-img-container:hover img {
+    transform: scale(1.03);
+  }
+
   .thumb-img {
     width: 70px;
     height: 70px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     border: 2px solid #eee;
     transition: all 0.3s ease;
   }
   .thumb-img:hover {
     border-color: #F68B1E;
-    transform: scale(1.08);
+    transform: scale(1.1);
+  }
+
+  /* Animated price */
+  .animated-price {
+    animation: colorShift 6s infinite alternate;
+  }
+
+  @keyframes colorShift {
+    0% { color: #ff4747; }
+    25% { color: #f8b400; }
+    50% { color: #4cd137; }
+    75% { color: #0097e6; }
+    100% { color: #ff47a3; }
+  }
+
+  /* Animated card backgrounds */
+  .animate-card {
+    animation: bgShift 12s infinite alternate;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .animate-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+  @keyframes bgShift {
+    0% { background-color: #fff5f5; }
+    25% { background-color: #fef6e4; }
+    50% { background-color: #f1fff1; }
+    75% { background-color: #eaf7ff; }
+    100% { background-color: #fff0fa; }
+  }
+
+  /* Legendary buttons */
+  .btn-legendary {
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .btn-legendary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  }
+
+  /* Theme support */
+  .theme-card {
+    transition: background-color 0.5s ease, color 0.5s ease;
   }
 </style>
 {% endblock %}

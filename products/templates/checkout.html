@@ -1,75 +1,138 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Checkout - MyStore{% endblock %}
+
 {% block content %}
+<div class="container py-5">
+  <div class="row g-4">
+    <!-- LEFT: Checkout Instructions -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm p-4 rounded-4 theme-card">
+        <h3 class="fw-bold mb-3 text-gradient">🛍 Checkout</h3>
+        <p class="fs-5 mb-4">Review your order and complete payment securely.</p>
 
-<div class="container py-4">
-  <div class="row">
-    <!-- Checkout Form Section -->
-    <div class="col-lg-8 mb-4">
-      <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body p-4">
-          <h3 class="mb-4 fw-bold">Checkout</h3>
-          <p class="fs-5">Review your order and complete payment.</p>
-
-          <hr>
-
-          <div class="alert alert-warning border-0 rounded-3 mt-3">
-            <h6 class="fw-bold mb-2">Manual Payment Details</h6>
-            <ul class="list-unstyled">
-              <li><strong>OPay Name:</strong> Peter Afolabi</li>
-              <li><strong>OPay Number:</strong> 08012345678</li>
-            </ul>
-            <p class="mb-0">After payment, click <strong>“I Have Paid”</strong> to confirm your order.</p>
-          </div>
-
-          <form method="post" action="{% url 'products:confirm-payment' %}" class="mt-4">
-            {% csrf_token %}
-            <button class="btn btn-success btn-lg w-100 py-3 rounded-pill shadow-sm">I Have Paid</button>
-          </form>
+        <div class="alert alert-warning border-0 rounded-4 shadow-sm">
+          <h5 class="fw-bold mb-2"><i class="bi bi-credit-card"></i> Manual Payment Details</h5>
+          <ul class="list-unstyled mb-2">
+            <li><strong>Account Name:</strong> Peter Afolabi</li>
+            <li><strong>OPay Number:</strong> 08012345678</li>
+          </ul>
+          <p class="mb-0 text-muted">After making your payment, click <strong>“I Have Paid”</strong> to confirm your order.</p>
         </div>
+
+        <form method="post" action="{% url 'products:confirm-payment' %}" class="mt-4">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success w-100 py-3 fw-semibold rounded-pill shadow-sm btn-glow">
+            ✅ I Have Paid
+          </button>
+        </form>
       </div>
     </div>
 
-    <!-- Order Summary Section -->
+    <!-- RIGHT: Order Summary -->
     <div class="col-lg-4">
-      <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body p-4">
-          <h5 class="fw-bold mb-3">Order Summary</h5>
-          <ul class="list-group list-group-flush">
-            {% for product in products %}
-            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-2">
-              <div>
-                <p class="mb-1 fw-semibold">{{ product.name }}</p>
-                <small class="text-muted">Qty: {{ product.quantity }}</small>
-              </div>
-              <span>₦{{ product.total_price }}</span>
-            </li>
-            {% endfor %}
-          </ul>
+      <div class="card border-0 shadow-sm p-4 rounded-4 theme-card sticky-top" style="top: 90px;">
+        <h5 class="fw-bold mb-3"><i class="bi bi-receipt"></i> Order Summary</h5>
 
-          <hr>
+        {% if products %}
+        <ul class="list-group list-group-flush mb-3">
+          {% for product in products %}
+          <li class="list-group-item border-0 px-0 d-flex justify-content-between align-items-center">
+            <div>
+              <p class="mb-1 fw-semibold">{{ product.name }}</p>
+              <small class="text-muted">Qty: {{ product.quantity }}</small>
+            </div>
+            <span class="fw-semibold color-changing">₦{{ product.total_price|floatformat:2 }}</span>
+          </li>
+          {% endfor %}
+        </ul>
 
-          <div class="d-flex justify-content-between fw-bold fs-5">
-            <span>Total:</span>
-            <span>₦{{ total }}</span>
-          </div>
+        <hr>
+
+        <div class="d-flex justify-content-between fw-bold fs-5">
+          <span>Total:</span>
+          <span class="text-danger color-changing">₦{{ total|floatformat:2 }}</span>
         </div>
+        {% else %}
+        <p class="text-muted text-center mt-3">No items in your order.</p>
+        {% endif %}
       </div>
     </div>
   </div>
 </div>
 
 <style>
-  .card {
+  body {
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  .theme-card {
+    background: #fff;
     border-radius: 20px;
+    transition: all 0.4s ease;
   }
+
+  .text-gradient {
+    background: linear-gradient(90deg, #ff7b00, #ff0066);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
   .btn-success {
-    background-color: #28a745;
+    background: linear-gradient(90deg, #28a745, #20c997);
     border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
+
   .btn-success:hover {
-    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(32, 201, 151, 0.4);
+  }
+
+  .btn-glow {
+    animation: glowPulse 2s infinite alternate;
+  }
+
+  @keyframes glowPulse {
+    0% { box-shadow: 0 0 10px rgba(40, 167, 69, 0.5); }
+    100% { box-shadow: 0 0 25px rgba(32, 201, 151, 0.8); }
+  }
+
+  .color-changing {
+    animation: colorShift 6s infinite alternate;
+  }
+
+  @keyframes colorShift {
+    0% { color: #ff4747; }
+    25% { color: #ffb400; }
+    50% { color: #4cd137; }
+    75% { color: #0097e6; }
+    100% { color: #e84118; }
+  }
+
+  .alert-warning {
+    background-color: #fff6e6;
+    border-left: 4px solid #ffb400;
+  }
+
+  .dark-mode .theme-card {
+    background-color: #1f1f1f !important;
+    color: #e0e0e0 !important;
   }
 </style>
+
+<script>
+  // Auto fade-in animation
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.theme-card').forEach((card, i) => {
+      card.style.opacity = '0';
+      setTimeout(() => {
+        card.style.transition = 'opacity 0.6s ease';
+        card.style.opacity = '1';
+      }, i * 150);
+    });
+  });
+</script>
 
 {% endblock %}
