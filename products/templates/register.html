@@ -1,31 +1,116 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="container mt-5">
-  <h2 class="mb-4">Register</h2>
+<style>
+  body {
+    background-color: #f5f5f5;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .register-container {
+    max-width: 500px;
+    margin: 60px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 40px 35px;
+  }
+
+  .register-header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  .register-header h2 {
+    color: #ff4747;
+    font-weight: 700;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .form-control {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    transition: border-color 0.2s ease;
+  }
+
+  .form-control:focus {
+    border-color: #ff4747;
+    box-shadow: 0 0 0 0.2rem rgba(255, 71, 71, 0.25);
+  }
+
+  .btn-primary {
+    background-color: #ff4747;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 0;
+    width: 100%;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #e63e3e;
+  }
+
+  .login-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+  }
+
+  .login-link a {
+    color: #ff4747;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<div class="register-container">
+  <div class="register-header">
+    <h2>Create Your Account</h2>
+    <p>Join our e-commerce family and start shopping smarter!</p>
+  </div>
+
   <form method="POST">
     {% csrf_token %}
-    <div class="form-group">
+    <div class="form-group mb-3">
       <label for="full_name">Full Name</label>
       <input type="text" class="form-control" name="full_name" id="full_name" required>
     </div>
-    <div class="form-group">
-      <label for="email">Email address</label>
+
+    <div class="form-group mb-3">
+      <label for="email">Email Address</label>
       <input type="email" class="form-control" name="email" id="email" required>
     </div>
-    <div class="form-group">
+
+    <div class="form-group mb-3">
       <label for="phone">Phone Number (Nigerian)</label>
       <input type="tel" class="form-control" name="phone" id="phone" pattern="^0\d{10}$" required>
     </div>
-    <div class="form-group">
+
+    <div class="form-group mb-3">
       <label for="password">Password (min 8 characters)</label>
       <input type="password" class="form-control" name="password" id="password" minlength="8" required>
     </div>
-    <div class="form-group">
+
+    <div class="form-group mb-3">
       <label for="confirm_password">Confirm Password</label>
       <input type="password" class="form-control" name="confirm_password" id="confirm_password" minlength="8" required>
     </div>
-    <button type="submit" class="btn btn-primary">Register</button>
+
+    <button type="submit" class="btn btn-primary">Create Account</button>
+
+    <div class="login-link">
+      <p>Already have an account? <a href="{% url 'products:login' %}">Log In</a></p>
+    </div>
   </form>
 </div>
 {% endblock %}

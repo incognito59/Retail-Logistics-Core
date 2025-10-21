@@ -1,67 +1,98 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
-  <div class="row">
-    <!-- Thumbnails (left side) -->
+<div class="container my-5">
+  <div class="row g-4 align-items-start">
+    
+    <!-- Thumbnails on the left -->
     <div class="col-md-2 d-flex flex-column align-items-center">
       {% if product.image_url %}
-        <img src="{{ product.image_url }}" class="img-thumbnail mb-2 thumb-img" alt="Main" onclick="changeImage(this)">
+        <img src="{{ product.image_url }}" class="thumb-img mb-2" alt="Main" onclick="changeImage(this)">
       {% endif %}
       {% if product.additional_images %}
         {% for img in product.additional_images %}
-          <img src="{{ img }}" class="img-thumbnail mb-2 thumb-img" alt="Additional" onclick="changeImage(this)">
+          <img src="{{ img }}" class="thumb-img mb-2" alt="Additional" onclick="changeImage(this)">
         {% endfor %}
       {% endif %}
     </div>
 
-    <!-- Main image and product details -->
+    <!-- Main image in the center -->
     <div class="col-md-6">
-      <img id="main-image" src="{{ product.image_url }}" class="img-fluid mb-3 border rounded" style="max-height: 400px;" alt="{{ product.name }}">
-    </div>
-
-    <div class="col-md-4">
-      <h2>{{ product.name }}</h2>
-      <p class="text-muted">{{ product.description }}</p>
-      <h4 class="text-success">₦{{ product.price }}</h4>
-
-      <div class="mt-3">
-        <a href="{% url 'products:add-to-cart' product.id %}" class="btn btn-primary mb-2 w-100">Add to Cart</a>
-        <a href="{% url 'products:buy-now' product.id %}" class="btn btn-success w-100">Buy Now</a>
+      <div class="main-img-container border rounded-4 shadow-sm overflow-hidden">
+        <img id="main-image" src="{{ product.image_url }}" class="img-fluid" alt="{{ product.name }}">
       </div>
     </div>
+
+    <!-- Product details on the right -->
+    <div class="col-md-4">
+      <div class="p-4 rounded-4 shadow-sm bg-white border">
+        <h3 class="fw-bold">{{ product.name }}</h3>
+        <p class="text-muted">{{ product.description }}</p>
+
+        <h4 class="text-danger fw-semibold mb-4">₦{{ product.price|floatformat:2 }}</h4>
+
+        <div class="d-flex flex-column gap-2">
+          <a href="{% url 'products:add-to-cart' product.id %}" class="btn btn-warning w-100 text-dark fw-semibold">
+            🛒 Add to Cart
+          </a>
+          <a href="{% url 'products:buy-now' product.id %}" class="btn btn-dark w-100 fw-semibold">
+            ⚡ Buy Now
+          </a>
+        </div>
+
+        <div class="mt-4">
+          <p class="small mb-1 text-secondary"><strong>Delivery:</strong> Free shipping nationwide</p>
+          <p class="small text-secondary"><strong>Estimated Arrival:</strong> 3 - 7 business days</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Reviews Section -->
-  <hr class="my-5">
-  <div class="mt-5">
-    <h4>Customer Reviews</h4>
+  <div class="mt-5 pt-4 border-top">
+    <h4 class="fw-bold mb-4">Customer Reviews</h4>
+
     {% for comment in comments %}
-      <div class="border p-3 mb-3 rounded shadow-sm">
-        <strong>{{ comment.name }}</strong>
-        <p class="mb-1">Rating: {{ comment.rating }}/5</p>
-        <p>{{ comment.text }}</p>
+      <div class="p-4 mb-3 border rounded-4 bg-light shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong>{{ comment.name }}</strong>
+          <span class="text-warning">
+            {% for i in "12345" %}
+              {% if forloop.counter <= comment.rating %}
+                ★
+              {% else %}
+                ☆
+              {% endif %}
+            {% endfor %}
+          </span>
+        </div>
+        <p class="mb-2">{{ comment.text }}</p>
         <small class="text-muted">{{ comment.created_at|date:"M d, Y" }}</small>
       </div>
     {% empty %}
-      <p>No reviews yet.</p>
+      <p class="text-muted">No reviews yet. Be the first to leave one!</p>
     {% endfor %}
 
-    <form method="post" class="mt-4 p-4 border rounded bg-light shadow-sm">
+    <!-- Review Form -->
+    <form method="post" class="mt-4 p-4 border rounded-4 bg-white shadow-sm">
       {% csrf_token %}
-      <div class="form-group mb-3">
-        <label for="name">Your Name</label>
+      <h5 class="fw-semibold mb-3">Write a Review</h5>
+
+      <div class="mb-3">
+        <label class="form-label">Your Name</label>
         <input type="text" name="name" class="form-control" required>
       </div>
 
-      <div class="form-group mb-3">
-        <label for="text">Your Review</label>
+      <div class="mb-3">
+        <label class="form-label">Your Review</label>
         <textarea name="text" class="form-control" rows="3" required></textarea>
       </div>
 
-      <div class="form-group mb-3">
-        <label for="rating">Rating</label>
-        <select name="rating" class="form-control" required>
+      <div class="mb-3">
+        <label class="form-label">Rating</label>
+        <select name="rating" class="form-select" required>
           <option value="">Select rating</option>
           {% for i in "12345" %}
             <option value="{{ i }}">{{ i }}</option>
@@ -69,16 +100,45 @@
         </select>
       </div>
 
-      <button type="submit" class="btn btn-outline-primary w-100">Submit Review</button>
+      <button type="submit" class="btn btn-warning w-100 fw-semibold text-dark">
+        Submit Review
+      </button>
     </form>
   </div>
 </div>
 
-<!-- JS to update the main image on click -->
+<!-- JS -->
 <script>
   function changeImage(thumb) {
     const main = document.getElementById('main-image');
-    main.src = thumb.src;
+    main.style.opacity = 0;
+    setTimeout(() => {
+      main.src = thumb.src;
+      main.style.opacity = 1;
+    }, 150);
   }
 </script>
+
+<!-- Styles -->
+<style>
+  .main-img-container img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+  }
+  .thumb-img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid #eee;
+    transition: all 0.3s ease;
+  }
+  .thumb-img:hover {
+    border-color: #F68B1E;
+    transform: scale(1.08);
+  }
+</style>
 {% endblock %}

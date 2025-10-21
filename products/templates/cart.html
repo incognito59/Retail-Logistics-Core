@@ -1,38 +1,184 @@
 {% extends 'base.html' %}
-{% block content %}
-<div class="container mt-5">
-  <form method="get" action="{% url 'products:product-list' %}" class="mb-4">
-    <div class="input-group">
-      <input type="text" name="q" placeholder="Search..." class="form-control" />
-      <button class="btn btn-primary" type="submit">Search</button>
-    </div>
-  </form>
+{% load static %}
 
-  <h3>Your Cart</h3>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Product</th>
-        <th>Qty</th>
-        <th>Price</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for product in products %}
-        <tr>
-          <td>{{ product.title }}</td>
-          <td>{{ product.quantity }}</td>
-          <td>₦{{ product.price }}</td>
-          <td>₦{{ product.total_price }}</td>
-        </tr>
-      {% endfor %}
-      <tr>
-        <td colspan="3"><strong>Total</strong></td>
-        <td><strong>₦{{ total }}</strong></td>
-      </tr>
-    </tbody>
-  </table>
-  <a href="{% url 'products:checkout' %}" class="btn btn-success">Proceed to Checkout</a>
+{% block title %}My Cart - MyStore{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <!-- Top Bar: Search + Theme Toggle -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <form class="d-flex w-75" method="get" action="{% url 'products:product-list' %}">
+      <input type="text" class="form-control me-2" name="q" placeholder="Search for products..." value="{{ request.GET.q }}">
+      <button class="btn btn-warning fw-semibold">Search</button>
+    </form>
+    <button id="theme-toggle" class="btn btn-outline-dark">🌙 Dark Mode</button>
+  </div>
+
+  <div class="row g-4">
+    <!-- CART ITEMS SECTION -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm rounded-4 p-3 theme-card">
+        <h4 class="fw-bold mb-4">Shopping Cart</h4>
+
+        {% if products %}
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Product</th>
+                  <th scope="col" class="text-center">Quantity</th>
+                  <th scope="col" class="text-end">Unit Price</th>
+                  <th scope="col" class="text-end">Total</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for product in products %}
+                  <tr class="cart-row">
+                    <td>
+                      <div class="d-flex align-items-center gap-3">
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="rounded shadow-sm" style="width: 70px; height: 70px; object-fit: cover;">
+                        <div>
+                          <h6 class="mb-1 fw-semibold color-changing">{{ product.name }}</h6>
+                          <small class="text-muted d-block">{{ product.description|truncatechars:50 }}</small>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td class="text-center">
+                      <input type="number" min="1" value="{{ product.quantity }}" class="form-control form-control-sm text-center qty-input" style="width: 70px;">
+                    </td>
+
+                    <td class="text-end color-changing">₦{{ product.price|floatformat:2 }}</td>
+                    <td class="text-end fw-semibold color-changing">₦{{ product.total_price|floatformat:2 }}</td>
+                    <td class="text-end">
+                      <!-- ✅ Fixed delete button -->
+                      <a href="{% url 'products:delete-from-cart' product.id %}" 
+                         class="btn btn-sm btn-outline-danger rounded-circle remove-btn" 
+                         title="Remove Item">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-center py-5">
+            <img src="{% static 'img/empty-cart.svg' %}" alt="Empty Cart" class="img-fluid" style="max-width: 200px;">
+            <h5 class="mt-3 text-muted">Your cart is empty</h5>
+            <a href="{% url 'products:product-list' %}" class="btn mt-3 fw-semibold" style="background-color: #F68B1E; color: white;">Continue Shopping</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- CART SUMMARY SECTION -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top theme-card" style="top: 90px;">
+        <h5 class="fw-bold mb-4">Order Summary</h5>
+
+        <div class="d-flex justify-content-between mb-2">
+          <span>Subtotal</span>
+          <span class="fw-semibold">₦{{ total|floatformat:2 }}</span>
+        </div>
+
+        <div class="d-flex justify-content-between mb-2">
+          <span>Shipping Fee</span>
+          <span class="fw-semibold text-success">₦0.00</span>
+        </div>
+
+        <hr>
+
+        <div class="d-flex justify-content-between mb-3">
+          <span class="fw-bold fs-5">Total</span>
+          <span class="fw-bold text-danger fs-5 color-changing">₦{{ total|floatformat:2 }}</span>
+        </div>
+
+        <a href="{% url 'products:checkout' %}" class="btn checkout-btn w-100 fw-semibold py-3 mb-3">
+          Proceed to Checkout
+        </a>
+
+        <a href="{% url 'products:product-list' %}" class="btn btn-outline-dark w-100 fw-semibold py-2">
+          Continue Shopping
+        </a>
+      </div>
+    </div>
+  </div>
 </div>
+
+<style>
+  body {
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  .theme-card {
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  .color-changing {
+    animation: colorChange 5s infinite alternate;
+  }
+
+  @keyframes colorChange {
+    0% { color: #ff4d4d; }
+    25% { color: #ff9900; }
+    50% { color: #0099ff; }
+    75% { color: #00cc66; }
+    100% { color: #cc00ff; }
+  }
+
+  .checkout-btn {
+    background-color: #F68B1E;
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+  }
+
+  .checkout-btn:hover {
+    background-color: #e67300;
+  }
+
+  .remove-btn {
+    border: 1px solid #ff4d4d;
+    color: #ff4d4d;
+    transition: all 0.2s ease;
+  }
+
+  .remove-btn:hover {
+    background-color: #ff4d4d;
+    color: white;
+  }
+
+  .cart-row:hover {
+    background-color: #fff7f0;
+    transition: 0.3s ease;
+  }
+
+  .dark-mode {
+    background-color: #121212 !important;
+    color: #e0e0e0 !important;
+  }
+
+  .dark-mode .theme-card {
+    background-color: #1e1e1e !important;
+    color: #ddd !important;
+  }
+
+  .dark-mode .table-light {
+    background-color: #333 !important;
+    color: #fff !important;
+  }
+</style>
+
+<script>
+  // ✅ Theme Toggle
+  const toggleBtn = document.getElementById('theme-toggle');
+  toggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️ Light Mode' : '🌙 Dark Mode';
+  });
+</script>
+
 {% endblock %}

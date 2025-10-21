@@ -1,49 +1,138 @@
 {% extends 'base.html' %}
-
 {% block content %}
-
-<!-- Search Bar in Navbar (inject this into base.html inside navbar block if not already) -->
-<form class="d-flex me-2" method="get" action="{% url 'products:product-list' %}">
-  <input class="form-control me-2" type="search" name="search" placeholder="Search products..." value="{{ request.GET.search }}">
-  <button class="btn btn-outline-light" type="submit">Search</button>
-</form>
-
 <div class="container mt-5">
-  <h2 class="text-center mb-4 fw-bold">Browse Our Products</h2>
+
+  <h2 class="text-center fw-bold mb-4">🔥 Featured Products</h2>
 
   {% if products %}
-  <div class="row">
+  <div class="row g-4">
     {% for product in products %}
-      <div class="col-md-4 mb-5">
-        <div class="card h-100 shadow-sm border-0 product-card">
-          <a href="{% url 'products:product-detail' product.id %}" class="text-decoration-none text-dark">
-            <img src="{{ product.image_url }}" class="card-img-top" style="height: 270px; object-fit: cover;" alt="{{ product.name }}">
-            <div class="card-body">
-              <h5 class="card-title">{{ product.name }}</h5>
-              <p class="card-text fs-5 text-success">₦{{ product.price }}</p>
-            </div>
+    <div class="col-6 col-md-4 col-lg-3">
+      <div class="card border-0 shadow-sm h-100 product-card animate-card">
+
+        <!-- Product Image -->
+        <div class="position-relative overflow-hidden rounded-3">
+          <a href="{% url 'products:product-detail' product.id %}">
+            <img 
+              src="{{ product.image_url }}" 
+              class="card-img-top img-fluid" 
+              style="height: 250px; object-fit: cover;" 
+              alt="{{ product.name }}"
+            >
           </a>
-          <div class="card-footer bg-white border-0">
-            <a href="{% url 'products:add-to-cart' product.id %}" class="btn btn-success w-100">Add to Cart</a>
+          <div class="overlay d-flex justify-content-center align-items-center">
+            <a href="{% url 'products:product-detail' product.id %}" class="btn btn-light btn-sm me-2">
+              <i class="bi bi-eye"></i> View
+            </a>
+            <a href="{% url 'products:add-to-cart' product.id %}" class="btn btn-danger btn-sm add-to-cart-btn">
+              <i class="bi bi-cart-plus"></i> Add
+            </a>
           </div>
         </div>
+
+        <!-- Product Info -->
+        <div class="card-body text-center">
+          <h6 class="fw-bold mb-2 text-truncate">{{ product.name }}</h6>
+          <p class="fw-semibold fs-5 mb-0 animated-price">₦{{ product.price|floatformat:2 }}</p>
+        </div>
       </div>
+    </div>
     {% endfor %}
   </div>
 
-  <div class="text-center mt-4">
-    <a href="{% url 'products:view-cart' %}" class="btn btn-warning btn-lg">View Cart</a>
+  <div class="text-center mt-5">
+    <a href="{% url 'products:view-cart' %}" class="btn btn-warning px-5 py-2 rounded-pill fw-bold shadow-sm">
+      🛒 View Cart
+    </a>
   </div>
+
   {% else %}
-    <p class="text-center mt-5">No products found.</p>
+    <p class="text-center mt-5 text-muted">No products found.</p>
   {% endif %}
 </div>
 
 <style>
+  /* Product Card Hover Effects */
+  .product-card {
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    background-color: var(--card-bg);
+  }
+
   .product-card:hover {
-    transform: scale(1.02);
-    transition: all 0.3s ease-in-out;
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+
+  .product-card:hover .overlay {
+    opacity: 1;
+  }
+
+  .overlay .btn:hover {
+    transform: scale(1.1);
+  }
+
+  /* Animated price color */
+  .animated-price {
+    animation: colorShift 6s infinite alternate;
+  }
+
+  @keyframes colorShift {
+    0% { color: #ff4747; }
+    25% { color: #f8b400; }
+    50% { color: #4cd137; }
+    75% { color: #0097e6; }
+    100% { color: #ff47a3; }
+  }
+
+  /* Animated card background */
+  .animate-card {
+    animation: bgShift 10s infinite alternate;
+  }
+
+  @keyframes bgShift {
+    0% { background-color: #fff5f5; }
+    25% { background-color: #fef6e4; }
+    50% { background-color: #f1fff1; }
+    75% { background-color: #eaf7ff; }
+    100% { background-color: #fff0fa; }
   }
 </style>
+
+<!-- Toast Notification -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+  <div id="addToCartToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body">
+        ✅ Product added to cart! <a href="{% url 'products:view-cart' %}" class="text-white text-decoration-underline">Check cart now</a>.
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Trigger toast on add-to-cart click
+  const addButtons = document.querySelectorAll('.add-to-cart-btn');
+  const toastEl = document.getElementById('addToCartToast');
+  const toast = new bootstrap.Toast(toastEl, { delay: 2500 });
+
+  addButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      setTimeout(() => toast.show(), 300);
+    });
+  });
+</script>
 
 {% endblock %}
