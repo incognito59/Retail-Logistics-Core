@@ -1,4 +1,4 @@
-# 📦 Retail-Logistics-Core (Formerly my-work)
+# 📦 Retail-Logistics-Core
 
 ### 🛒 Overview
 A robust E-commerce backend system built with **Django**.
@@ -8,13 +8,13 @@ Designed to handle product inventory, order management, and customer logistics. 
 * **`products/`**: Handles product logic, inventory tracking, and categories.
 * **`templates/`**: Frontend UI components (HTML/CSS) for the store interface.
 * **`mywork/`**: Main project configuration and settings.
-* **`db.sqlite3`**: Development database (pre-configured).
+* **`db.sqlite3`**: Development database.
 * **`manage.py`**: Command-line utility for administrative tasks.
 
 ### 🚀 Key Features
 * **Inventory Management:** Add/Edit/Delete products via the Admin panel.
 * **Dynamic Rendering:** Uses Django Templating Engine to display products.
-* **Database Integration:** SQLite for rapid development and testing.
+* **Cart Logic:** Session-based shopping cart functionality.
 
 ### 🛠️ How to Run This Project
 1.  **Clone the repository**
@@ -29,8 +29,6 @@ Designed to handle product inventory, order management, and customer logistics. 
     ```bash
     python manage.py runserver
     ```
-4.  **Access the App**
-    Open your browser and go to `http://127.0.0.1:8000`
 
 ### 👤 Author
 **Incognito59 (Peter)** - *Logistics Manager & Security Enthusiast*
